@@ -3,6 +3,7 @@ import pandas as pd
 import locale
 import plotly.express as px
 
+# try
 try:
     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 except locale.Error:
