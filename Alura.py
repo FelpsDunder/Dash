@@ -3,6 +3,7 @@ import pandas as pd
 import locale
 import plotly.express as px
 
+# try
 try:
     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 except locale.Error:
@@ -12,8 +13,8 @@ except locale.Error:
 st.set_page_config(layout='wide')
 
 st.title(':rainbow[Dashboard Teste] :heavy_dollar_sign:')
- #dados importacao
-df_data = pd.read_excel("dados.xlsx")
+# dados importacao
+df_data = pd.read_excel("dataset/dados.xlsx")
 
 df_data['DATAEXTRAT'] = pd.to_datetime(df_data['DATAEXTRAT'])
 df_data['Mês'] = df_data['DATAEXTRAT'].dt.to_period('M').astype(str)
@@ -37,7 +38,7 @@ valor_despesas = df_data.loc[condicao_categoria & condicao_valor].groupby('Mês'
 valor_receitas = df_data.loc[condicao_categoria & condicao_valor_2].groupby('Mês')['VALORLANCA'].sum().reset_index()
 
 # Formatando o eixo x (Mês)
-valor_despesas['Mês'] = valor_despesas['Mês'].astype(str).str[5:] + '/' + valor_despesas['Mês'].astype(str).str[0:4] 
+valor_despesas['Mês'] = valor_despesas['Mês'].astype(str).str[5:] + '/' + valor_despesas['Mês'].astype(str).str[0:4]
 valor_receitas['Mês'] = valor_receitas['Mês'].astype(str).str[5:] + '/' + valor_receitas['Mês'].astype(str).str[0:4]
 
 # Ordenando o DataFrame pelo Mês
@@ -54,17 +55,17 @@ df_grafico = pd.DataFrame({
 df_grafico['Soma Despesas'] = df_grafico['Soma Despesas'].astype(str).replace('[\$,]', '', regex=True).astype(float)
 df_grafico['Soma Receitas'] = df_grafico['Soma Receitas'].astype(str).replace('[\$,]', '', regex=True).astype(float)
 
-formatted_despesas = locale.currency(total_despesas, grouping=True)
-formatted_receitas = locale.currency(total_receitas, grouping=True)
-formatted_saldo = locale.currency(saldo_ano, grouping=True)
+formatted_despesas = f'R$ {total_despesas:,.2f}'
+formatted_receitas = f'R$ {total_receitas:,.2f}'
+formatted_saldo = f'R$ {saldo_ano:,.2f}'
 
 coluna1, coluna2 = st.columns(2)
 with coluna1:
-    st.metric("Despesas", f"{formatted_despesas}")
+    st.metric("Despesas", formatted_despesas)
 with coluna2:
-    st.metric("Receitas", f"{formatted_receitas}")
+    st.metric("Receitas", formatted_receitas)
 
-st.metric("Saldo", f"{formatted_saldo}")
+st.metric("Saldo", formatted_saldo)
 
 fig = px.line(df_grafico, x='Mês', y=['Soma Despesas', 'Soma Receitas'],
               markers=True, line_shape='linear', labels={'value': '', 'variable': ''},
