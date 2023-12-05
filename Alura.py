@@ -3,7 +3,11 @@ import pandas as pd
 import locale
 import plotly.express as px
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+try:
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+except locale.Error:
+    # Se a configuração do locale não for suportada, use o padrão 'C' (ou outro que funcione)
+    locale.setlocale(locale.LC_ALL, 'C')
 
 st.set_page_config(layout='wide')
 
