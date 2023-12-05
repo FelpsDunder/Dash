@@ -14,7 +14,7 @@ st.set_page_config(layout='wide')
 
 st.title(':rainbow[Dashboard Teste] :heavy_dollar_sign:')
 # dados importacao
-df_data = pd.read_excel("dataset/dados.xlsx")
+df_data = pd.read_excel("dados.xlsx")
 
 df_data['DATAEXTRAT'] = pd.to_datetime(df_data['DATAEXTRAT'])
 df_data['Mês'] = df_data['DATAEXTRAT'].dt.to_period('M').astype(str)
