@@ -12,7 +12,11 @@ except locale.Error:
 
 st.set_page_config(layout='wide')
 
+<<<<<<< HEAD
 st.title(':cyan[Dashboard Teste] :heavy_dollar_sign:')
+=======
+st.title(':rainbow[Dashboard Teste] :heavy_dollar_sign:')
+>>>>>>> 48bf868a1d6ef9c9e32cccc59cc06c8201e5c489
 # dados importacao
 df_data = pd.read_excel("dados.xlsx")
 
