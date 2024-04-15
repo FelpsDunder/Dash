@@ -17,26 +17,23 @@ st.title(':violet[Dashboard Teste] :heavy_dollar_sign:')
 # dados importacao
 df_data = pd.read_excel("dados.xlsx")
 
-df_data['DATAEXTRAT'] = pd.to_datetime(df_data['DATAEXTRAT'])
-df_data['Mês'] = df_data['DATAEXTRAT'].dt.to_period('M').astype(str)
+df_data['DATA'] = pd.to_datetime(df_data['DATA'])
+df_data['Mês'] = df_data['DATA'].dt.to_period('M').astype(str)
 
 def calcular_movimentacao(df, tipo_movimentacao):
-    filtro = (df['VALORLANCA'] * tipo_movimentacao > 0) & (df['CATEGORIA'] != 'Transferência entre contas')
-    dados_filtrados = df[filtro]
-    soma_movimentacao = dados_filtrados['VALORLANCA'].sum()
-    return soma_movimentacao
+    return df[(df['VALOR'] * tipo_movimentacao > 0) & (df['CATEGORIA'] != 'Transferência entre contas')]['VALOR'].sum()
+
 
 # Cálculos diretos
 total_despesas = calcular_movimentacao(df_data, -1)
 total_receitas = calcular_movimentacao(df_data, 1)
-saldo_ano = total_receitas + total_despesas
 
 condicao_categoria = df_data['CATEGORIA'] != 'Transferência entre contas'
-condicao_valor = df_data['VALORLANCA'] < 0
-condicao_valor_2 = df_data['VALORLANCA'] > 0
+condicao_valor = df_data['VALOR'] < 0
+condicao_valor_2 = df_data['VALOR'] > 0
 
-valor_despesas = df_data.loc[condicao_categoria & condicao_valor].groupby('Mês')['VALORLANCA'].sum().reset_index()
-valor_receitas = df_data.loc[condicao_categoria & condicao_valor_2].groupby('Mês')['VALORLANCA'].sum().reset_index()
+valor_despesas = df_data.loc[condicao_categoria & condicao_valor].groupby('Mês')['VALOR'].sum().reset_index()
+valor_receitas = df_data.loc[condicao_categoria & condicao_valor_2].groupby('Mês')['VALOR'].sum().reset_index()
 
 # Formatando o eixo x (Mês)
 valor_despesas['Mês'] = valor_despesas['Mês'].astype(str).str[5:] + '/' + valor_despesas['Mês'].astype(str).str[0:4]
@@ -47,9 +44,9 @@ valor_despesas = valor_despesas.sort_values('Mês')
 valor_receitas = valor_receitas.sort_values('Mês')
 
 df_grafico = pd.DataFrame({
-    'Mês': valor_despesas['Mês'],
-    'Soma Despesas': valor_despesas['VALORLANCA'],
-    'Soma Receitas': valor_receitas['VALORLANCA']
+    'Mês': valor_receitas['Mês'],
+    'Soma Despesas': valor_despesas['VALOR'],
+    'Soma Receitas': valor_receitas['VALOR']
 })
 
 # Removendo o símbolo de moeda antes de converter para float
@@ -58,7 +55,6 @@ df_grafico['Soma Receitas'] = df_grafico['Soma Receitas'].astype(str).replace(r'
 
 formatted_despesas = f'R$ {total_despesas:,.2f}'
 formatted_receitas = f'R$ {total_receitas:,.2f}'
-formatted_saldo = f'R$ {saldo_ano:,.2f}'
 
 coluna1, coluna2 = st.columns(2)
 with coluna1:
@@ -66,7 +62,7 @@ with coluna1:
 with coluna2:
     st.metric("Receitas", formatted_receitas)
 
-st.metric("Saldo", formatted_saldo)
+
 
 fig = px.line(df_grafico, x='Mês', y=['Soma Despesas', 'Soma Receitas'],
               markers=True, line_shape='linear', labels={'value': '', 'variable': ''},
