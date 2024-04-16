@@ -17,8 +17,8 @@ st.title(':violet[Dashboard Teste] :heavy_dollar_sign:')
 # dados importacao
 df_data = pd.read_excel("dados.xlsx")
 
-df_data['DATAEXTRAT'] = pd.to_datetime(df_data['DATAEXTRAT'])
-df_data['Mês'] = df_data['DATAEXTRAT'].dt.to_period('M').astype(str)
+df_data['DATA'] = pd.to_datetime(df_data['DATA'])
+df_data['Mês'] = df_data['DATA'].dt.to_period('M').astype(str)
 
 def calcular_movimentacao(df, tipo_movimentacao):
     filtro = (df['VALORLANCA'] * tipo_movimentacao > 0) & (df['CATEGORIA'] != 'Transferência entre contas')
